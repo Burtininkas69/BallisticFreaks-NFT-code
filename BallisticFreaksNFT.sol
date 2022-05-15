@@ -23,14 +23,14 @@ Ownable {
 
     /// @notice edit these before launching contract
     /// @dev only ReferralRewardPercentage & costToCreateReferral is editable
-    uint8 public referralRewardPercentage = 15;
+    uint8 public referralRewardPercentage = 20;
     uint16 public nonce = 1;
     /// @notice we will not release full supply until the game is finished
     uint16 constant public maxSupplyBeforeGame = 2000;
     uint16 constant public maxSupply = 10000;
     uint256 public cost = 0.05 ether;
     uint256 public referralCost = 0.045 ether;
-    uint256 public costToCreateReferral = 0.025 ether;
+    uint256 public costToCreateReferral = 0.015 ether;
 
     bool public paused = false;
     bool public revealed = false;
