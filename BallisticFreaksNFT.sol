@@ -32,6 +32,9 @@ Ownable {
     uint256 public referralCost = 0.045 ether;
     uint256 public costToCreateReferral = 0.015 ether;
 
+    /// @notice this uint prevents owners from withdrawing referral payouts from contract
+    uint256 internal referralObligationPool;
+
     bool public paused = false;
     bool public revealed = false;
     bool public frozenURI = false;
@@ -41,7 +44,8 @@ Ownable {
     /// @notice used to find unminted ID
     uint16[maxSupply] public mints;
 
-    mapping(address => uint) public addressesReferred;
+    mapping(address => uint) public mintsReferred;
+    mapping(address => uint) internal refObligation;
     mapping(string => bool) public codeIsTaken;
     mapping(string => address) public ownerOfCode;
 
@@ -52,6 +56,7 @@ Ownable {
         setUnrevealedURI(_unrevealedURI);
         coFounder = _coFounder;
 
+    /// @dev an array of lets say 10,000 numbers would be too long to hardcode it. So we are using constructor to generate all numbers for us.
         for (uint16 i = 0; i < maxSupply; ++i) {
             mints[i] = i;
         }
@@ -126,9 +131,22 @@ Ownable {
             _safeMint(_to, findUnminted());
         }
 
-        if (codeIsTaken[_code]) {
-            payable(ownerOfCode[_code]).transfer(msg.value / 100 * referralRewardPercentage);
-        }
+        /// @dev makes temp uint of referral payout, adds mint ammount to referral counter, adds payout to code owners array, updates contracts obligation pool
+        uint _refPayout = msg.value / 100 * referralRewardPercentage;
+        mintsReferred[ownerOfCode[_code]] = mintsReferred[ownerOfCode[_code]] + _mintAmount;
+        refObligation[ownerOfCode[_code]] = refObligation[ownerOfCode[_code]] + _refPayout;
+        referralObligationPool = referralObligationPool + _refPayout;
+    }
+
+    /// @notice referral address will be able to call this function and receive obligated eth amount from all referred mints
+    function withdrawReferralPayout() public {
+
+        ///@dev makes temp uint of referral payout, decreases contracts obligation pool, nulls senders referral reward array and sends payout to the address
+        uint _refPayout = refObligation[msg.sender];
+        referralObligationPool = referralObligationPool - _refPayout;
+        refObligation[msg.sender] = 0;
+        (bool ro, ) = payable(msg.sender).call {value: _refPayout}("");
+        require(ro);
     }
 
 
@@ -172,11 +190,6 @@ Ownable {
         costToCreateReferral = _cost;
     }
 
-    /* function setWhitelist(address _address) public onlyOwner {
-        require(whitelisted[_address] == false, "Address is whitelisted");
-        whitelisted[_address] = true;
-    } */
-
     function freezeURI() public onlyOwner {
         frozenURI = true;
     }
@@ -211,14 +224,11 @@ Ownable {
 
 
     /// @notice balance is split 50/50 to founder & coFounder
-    function withdraw() public payable onlyOwner {
-        uint halfBalance = address(this).balance / 2;
+    function withdraw() public onlyOwner {
+        uint halfBalance = (address(this).balance - referralObligationPool) / 2;
+        (bool oc, ) = payable(owner()).call {value: halfBalance}("");
 
-        (bool oc, ) = payable(owner()).call {value: halfBalance}
-        ("");
-
-        (bool cc, ) = payable(coFounder).call {value: halfBalance}
-        ("");
+        (bool cc, ) = payable(coFounder).call {value: halfBalance}("");
         require(oc && cc);
     }
 }
