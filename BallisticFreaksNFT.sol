@@ -157,6 +157,12 @@ Ownable {
     }
 
     //only owner
+
+    /// @notice releaseGame states that our game is released and now let's users mint remaining NFTs
+    function releaseGame() public onlyOwner {
+        gameIsLaunched = true;
+    }
+
     function changeReferralReward(uint8 _percentage) public onlyOwner {
         require(_percentage <= 100);
         referralRewardPercentage = _percentage;
