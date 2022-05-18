@@ -4,7 +4,7 @@ pragma solidity >= 0.7 .0 < 0.9 .0;
 
 /// @title BallisticFreaks contract
 /// @author Gustas K (ballisticfreaks@gmail.com)
-/// @note we won't have whitelisted mint in our release version. This is if someone want's to use it and have Whitelist option
+/// @notice we won't have whitelisted mint in our release version. This is if someone want's to use it and have Whitelist option
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -56,7 +56,8 @@ Ownable {
         setUnrevealedURI(_unrevealedURI);
         coFounder = _coFounder;
 
-    /// @dev an array of lets say 10,000 numbers would be too long to hardcode it. So we are using constructor to generate all numbers for us.
+    /// @notice an array of lets say 10,000 numbers would be too long to hardcode it. So we are using constructor to generate all numbers for us.
+    /// @dev generates all possible IDs of NFTs that our findUnminted() function picks from
         for (uint16 i = 0; i < maxSupply; ++i) {
             mints[i] = i;
         }
@@ -71,9 +72,10 @@ Ownable {
         return baseURI;
     }
 
-    /// @notice returns random number
+    /// @notice returns a semi-random number
     /// @dev this function is not very secure. While it provides randomness, it can be abused. But in our case for snipers it's not worth the hussle.
-    /// wouldn't use it for anything more that could have a big financial gain.
+    /// wouldn't use it for anything more that could have a big financial gain (for example in game function)
+    /// originally planned to have a chainlink implementation, but with that mint code exceeds 24576 bytes.
     function random(uint _limit) internal returns(uint16) {
         uint randomnumber = (uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, nonce))) % (_limit + 1));
         nonce++;
@@ -181,7 +183,7 @@ Ownable {
         gameIsLaunched = true;
     }
 
-    function changeReferralReward(uint8 _percentage) public onlyOwner {
+    function changeReferralRewardAndCost(uint8 _percentage) public onlyOwner {
         require(_percentage <= 100);
         referralRewardPercentage = _percentage;
     }
@@ -212,6 +214,7 @@ Ownable {
         revealed = true;
     }
 
+    /// @notice emergency pause. If something goes wrong, we could pause the mint function
     function pause(bool _state) public onlyOwner {
         paused = _state;
     }
@@ -220,8 +223,7 @@ Ownable {
     function editCoFounder(address _address) public {
         require(msg.sender == coFounder);
         coFounder = _address;
-    }
-
+    } 
 
     /// @notice balance is split 50/50 to founder & coFounder
     function withdraw() public onlyOwner {
