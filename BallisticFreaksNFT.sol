@@ -22,7 +22,7 @@ Ownable {
     string public baseExtension = ".json";
 
     /// @notice edit these before launching contract
-    /// @dev only ReferralRewardPercentage & costToCreateReferral is editable
+    /// @dev this information is not editable after launch
     uint8 public referralRewardPercentage = 20;
     uint16 public nonce = 1;
     /// @notice we will not release full supply until the game is finished
@@ -135,8 +135,9 @@ Ownable {
 
         /// @dev makes temp uint of referral payout, adds mint ammount to referral counter, adds payout to code owners array, updates contracts obligation pool
         uint _refPayout = msg.value / 100 * referralRewardPercentage;
-        mintsReferred[ownerOfCode[_code]] = mintsReferred[ownerOfCode[_code]] + _mintAmount;
-        refObligation[ownerOfCode[_code]] = refObligation[ownerOfCode[_code]] + _refPayout;
+        address _ownersAddress = ownerOfCode[_code];
+        mintsReferred[_ownersAddress] = mintsReferred[_ownersAddress] + _mintAmount;
+        refObligation[_ownersAddress] = refObligation[_ownersAddress] + _refPayout;
         referralObligationPool = referralObligationPool + _refPayout;
     }
 
@@ -181,15 +182,6 @@ Ownable {
     /// @notice releaseGame states that our game is released and now let's users mint remaining NFTs
     function releaseGame() public onlyOwner {
         gameIsLaunched = true;
-    }
-
-    function changeReferralRewardAndCost(uint8 _percentage) public onlyOwner {
-        require(_percentage <= 100);
-        referralRewardPercentage = _percentage;
-    }
-
-    function changeReferralCost(uint _cost) public onlyOwner {
-        costToCreateReferral = _cost;
     }
 
     function freezeURI() public onlyOwner {
