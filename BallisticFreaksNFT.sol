@@ -45,9 +45,9 @@ Ownable {
     uint16[maxSupply] public mints;
 
     mapping(address => uint) public mintsReferred;
-    mapping(address => uint) internal refObligation;
+    mapping(address => uint) public refObligation;
     mapping(string => bool) public codeIsTaken;
-    mapping(string => address) public ownerOfCode;
+    mapping(string => address) internal ownerOfCode;
 
     constructor(string memory _name,
         string memory _symbol,
