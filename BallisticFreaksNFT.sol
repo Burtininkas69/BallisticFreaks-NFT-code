@@ -1,15 +1,24 @@
-// SPDX-License-Identifier: MIT
-
 pragma solidity >= 0.7 .0 < 0.9 .0;
 
 /// @title BallisticFreaks contract
 /// @author Gustas K (ballisticfreaks@gmail.com)
 /// @notice we won't have whitelisted mint in our release version. This is if someone want's to use it and have Whitelist option
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+//██████╗░░█████╗░██╗░░░░░██╗░░░░░██╗░██████╗████████╗██╗░█████╗░
+//██╔══██╗██╔══██╗██║░░░░░██║░░░░░██║██╔════╝╚══██╔══╝██║██╔══██╗
+//██████╦╝███████║██║░░░░░██║░░░░░██║╚█████╗░░░░██║░░░██║██║░░╚═╝
+//██╔══██╗██╔══██║██║░░░░░██║░░░░░██║░╚═══██╗░░░██║░░░██║██║░░██╗
+//██████╦╝██║░░██║███████╗███████╗██║██████╔╝░░░██║░░░██║╚█████╔╝
+//╚═════╝░╚═╝░░╚═╝╚══════╝╚══════╝╚═╝╚═════╝░░░░╚═╝░░░╚═╝░╚════╝░
+//
+//███████╗██████╗░███████╗░█████╗░██╗░░██╗░██████╗
+//██╔════╝██╔══██╗██╔════╝██╔══██╗██║░██╔╝██╔════╝
+//█████╗░░██████╔╝█████╗░░███████║█████═╝░╚█████╗░
+//██╔══╝░░██╔══██╗██╔══╝░░██╔══██║██╔═██╗░░╚═══██╗
+//██║░░░░░██║░░██║███████╗██║░░██║██║░╚██╗██████╔╝
+//╚═╝░░░░░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░
 
-contract BallisticFreaksNFT is ERC721Enumerable,
+contract BallisticFreaksNFTs is ERC721Enumerable,
 Ownable {
     using Strings
     for uint256;
@@ -30,7 +39,7 @@ Ownable {
     uint16 constant public maxSupply = 10000;
     uint256 public cost = 0.05 ether;
     uint256 public referralCost = 0.045 ether;
-    uint256 public costToCreateReferral = 0.015 ether;
+    uint256 public costToCreateReferral = 0.02 ether;
 
     /// @notice this uint prevents owners from withdrawing referral payouts from contract
     uint256 internal referralObligationPool;
