@@ -2,7 +2,7 @@ pragma solidity >= 0.7 .0 < 0.9 .0;
 
 /// @title BallisticFreaks contract
 /// @author Gustas K (ballisticfreaks@gmail.com)
-/// @notice we won't have whitelisted mint in our release version. This is if someone want's to use it and have Whitelist option
+/// @notice we don't have a whitelist in this version of the code
 
 //██████╗░░█████╗░██╗░░░░░██╗░░░░░██╗░██████╗████████╗██╗░█████╗░
 //██╔══██╗██╔══██╗██║░░░░░██║░░░░░██║██╔════╝╚══██╔══╝██║██╔══██╗
